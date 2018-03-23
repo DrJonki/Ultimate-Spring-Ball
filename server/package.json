@@ -1,0 +1,36 @@
+{
+  "name": "ultimate-spring-jump-server",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev": "nodemon --watch src ./lib/index.js",
+    "start": "cross-env NODE_ENV=production node ./lib/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrJonki/Ultimate-Spring-Ball.git"
+  },
+  "author": "Joona Tiinanen",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/DrJonki/Ultimate-Spring-Ball/issues"
+  },
+  "homepage": "https://github.com/DrJonki/Ultimate-Spring-Ball#readme",
+  "devDependencies": {
+    "@types/dotenv": "^4.0.2",
+    "@types/lodash": "^4.14.106",
+    "@types/node": "^9.6.0",
+    "nodemon": "^1.17.2"
+  },
+  "dependencies": {
+    "cross-env": "^5.1.4",
+    "dotenv": "^5.0.1",
+    "lodash": "^4.17.5",
+    "module-alias": "^2.0.6",
+    "typescript": "^2.7.2",
+    "uuid": "^3.2.1"
+  }
+}

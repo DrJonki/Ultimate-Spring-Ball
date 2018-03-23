@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "types": [
+      "node"
+    ],
+    "outDir": "lib",
+    "strict": true,
+    "pretty": true,
+    "paths": {
+      "@/*": ["./src/@"]
+    }
+  },
+  "include": [
+    "./src/*"
+  ]
+}

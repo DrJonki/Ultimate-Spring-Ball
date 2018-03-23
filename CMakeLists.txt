@@ -8,7 +8,6 @@ project(WTFProject)
 
 include(ExternalProject)
 
-
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
@@ -56,6 +55,11 @@ ExternalProject_Add(SFML
 ExternalProject_Get_Property(SFML SOURCE_DIR)
 include_directories(${SOURCE_DIR}/include)
 
-include_directories(${CMAKE_SOURCE_DIR}/lib/include)
-add_subdirectory(lib)
-add_subdirectory(game)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+add_subdirectory(src)
+
+set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "WTF") 
+set_target_properties(WTF PROPERTIES 
+  LINK_FLAGS_RELEASE "/SUBSYSTEM:WINDOWS"
+  OUTPUT_NAME "USB"
+) 
