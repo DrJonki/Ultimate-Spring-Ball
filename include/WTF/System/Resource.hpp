@@ -20,5 +20,7 @@ namespace wtf
       static sf::Texture& texture(const std::string& path);
       static sf::SoundBuffer& soundBuffer(const std::string& path);
       static sf::Font& font(const std::string& path);
+
+      static void clearAll();
   };
 }

@@ -28,6 +28,8 @@ namespace wtf
 
     void update(const float dt);
 
+    void fixedUpdate(const float step);
+
     void draw(sf::RenderTarget& target);
 
     void setView(const sf::View* const view);

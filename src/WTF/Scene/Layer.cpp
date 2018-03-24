@@ -30,6 +30,17 @@ namespace wtf
     }
   }
 
+  void Layer::fixedUpdate(const float step)
+  {
+    if (!isActive()) {
+      return;
+    }
+
+    for (auto& i : m_entities) {
+      i.second->baseFixedUpdate(step);
+    }
+  }
+
   void Layer::draw(sf::RenderTarget& target)
   {
     if (!isActive())

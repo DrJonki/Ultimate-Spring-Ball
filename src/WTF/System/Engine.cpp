@@ -1,5 +1,6 @@
 #include <WTF/System/Engine.hpp>
 #include <WTF/System/Config.hpp>
+#include <WTF/System/Resource.hpp>
 #include <WTF/Scene/Scene.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -7,10 +8,11 @@ namespace wtf
 {
   Engine* Engine::ms_instance = nullptr;
 
-  Engine::Engine()
+  Engine::Engine(const std::string& name)
     : m_window()
     , m_clock()
     , m_scene()
+    , m_fixedAccum(0.f)
   {
     if (ms_instance) {
       throw "Only one wtf::Engine instance may exist";
@@ -25,21 +27,38 @@ namespace wtf
     m_window.create(sf::VideoMode(
       Config::get<int>("WINDOW_X"),
       Config::get<int>("WINDOW_Y")
-    ), "Ultimate Spring Ball");
+    ), name);
   }
 
   void Engine::exit()
   {
     ms_instance->m_window.close();
+
+    Resource::clearAll();
+  }
+
+  bool Engine::running()
+  {
+    return ms_instance->m_window.isOpen();
   }
 
   int Engine::operator ()()
   {
-    while (m_window.isOpen()) {
+    while (running()) {
+      static const auto fixedStep = 1.f / Config::get<int>("FIXED_TICKRATE");
       const auto delta = m_clock.restart().asSeconds();
+
+      m_window.clear();
 
       if (m_scene) {
         m_scene->update(delta);
+
+        if ((m_fixedAccum += delta) >= fixedStep) {
+          m_fixedAccum -= fixedStep;
+
+          m_scene->fixedUpdate(fixedStep);
+        }
+
         m_scene->draw(m_window);
       }
 
@@ -53,7 +72,7 @@ namespace wtf
           case sf::Event::Closed:
             exit();
             break;
-          case sf::Event::Resized:
+          /*case sf::Event::Resized:
           {
             const auto view = m_window.getView().getSize();
             const auto ratio = view.x / view.y;
@@ -64,11 +83,21 @@ namespace wtf
             ));
 
             break;
-          }
+          }*/
+
+          default:
+            if (m_scene) {
+              m_scene->onWindowEvent(event);
+            }
         }
       }
     }
     
     return 0;
+  }
+
+  sf::RenderWindow & Engine::getWindow()
+  {
+    return m_window;
   }
 }

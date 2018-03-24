@@ -6,6 +6,7 @@ namespace wtf
 {
   Scene::Scene()
     : m_layers()
+    , m_view()
   {}
 
   Scene::~Scene()
@@ -27,6 +28,13 @@ namespace wtf
     }
   }
 
+  void Scene::fixedUpdate(const float step)
+  {
+    for (auto& i : m_layers) {
+      i.second->fixedUpdate(step);
+    }
+  }
+
   void Scene::draw(sf::RenderTarget& target)
   {
     for (auto& i : m_layers) {
@@ -43,4 +51,7 @@ namespace wtf
   {
     return m_view;
   }
+
+  void Scene::onWindowEvent(const sf::Event&)
+  {}
 }

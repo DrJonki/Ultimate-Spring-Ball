@@ -2,6 +2,7 @@
 
 #include <WTF/Export.hpp>
 #include <SFML/Graphics/View.hpp>
+#include <SFML/Window/Event.hpp>
 #include <rapidjson/document.h>
 #include <map>
 #include <memory>
@@ -17,6 +18,8 @@ namespace wtf
 
   class WTF_API Scene
   {
+    friend class Engine;
+
   public:
 
     Scene();
@@ -27,11 +30,17 @@ namespace wtf
 
     virtual void update(const float dt);
 
+    virtual void fixedUpdate(const float step);
+
     virtual void draw(sf::RenderTarget& target);
 
     sf::View& getView();
 
     const sf::View& getView() const;
+
+  private:
+
+    virtual void onWindowEvent(const sf::Event& event);
 
   private:
 

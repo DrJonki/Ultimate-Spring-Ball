@@ -1,43 +1,57 @@
 #include <WTF/System/Network.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/IpAddress.hpp>
+#include <SFML/Network/Packet.hpp>
+#include <atomic>
 
 namespace wtf
 {
   sf::TcpSocket ns_tcp;
-  bool ns_tcpConnected = false;
+  std::atomic<bool> ns_tcpConnected(false);
   Network::MessageFunc ns_callback;
 
   bool Network::connectTcp(const std::string& address, const unsigned short port)
   {
-    ns_tcp.setBlocking(true);
-    ns_tcp.disconnect();
-
-    ns_tcpConnected = ns_tcp.connect(address, port, sf::seconds(5.f)) == sf::Socket::Status::Done;
-
-    if (ns_tcpConnected) {
-      ns_tcp.setBlocking(false);
+    if (tcpConnected()) {
+      return true;
     }
 
-    return ns_tcpConnected;
+    ns_tcpConnected.store(ns_tcp.connect(address, port, sf::seconds(2.f)) == sf::Socket::Status::Done);
+
+    if (tcpConnected()) {
+      ns_tcp.setBlocking(false);
+      return true;
+    }
+
+    return false;
+  }
+
+  void Network::disconnectTcp()
+  {
+    ns_tcp.disconnect();
+    ns_tcpConnected.store(false);
+  }
+
+  bool Network::tcpConnected()
+  {
+    return ns_tcpConnected.load();
   }
 
   void Network::pollMessages()
   {
-    if (!ns_callback) {
+    if (!ns_callback || !ns_tcpConnected) {
       return;
     }
 
-    static std::string buffer(USHRT_MAX, '\0');
-    static size_t tcpCursor = 0;
-    std::size_t received = 0;
+    sf::Packet packet;
 
     while (true) {
-      const auto result = ns_tcp.receive(&buffer[tcpCursor], buffer.size(), received);
-
-      switch (result)
+      switch (ns_tcp.receive(packet))
       {
         case sf::Socket::Status::Done:
+          ns_callback(packet);
+          break;
+
         case sf::Socket::Status::Partial:
           break;
 
@@ -46,20 +60,12 @@ namespace wtf
           return;
 
         case sf::Socket::Status::Disconnected:
-          ns_tcpConnected = false;
-          return ns_callback("disconnect");
-      }
+          disconnectTcp();
 
-      const auto pos = buffer.find(";end;", tcpCursor);
-      tcpCursor += received;
+          sf::Packet disconnectPacket;
+          disconnectPacket << "disconnect" << "connection interrupted";
 
-      if (pos != std::string::npos) {
-        ns_callback(buffer.substr(0, pos));
-
-        const auto sub = buffer.substr(pos + 5, tcpCursor - received + pos + 5);
-        memcpy(&buffer[0], sub.c_str(), sub.size());
-
-        tcpCursor -= pos + 5;
+          return ns_callback(disconnectPacket);
       }
     }
   }
@@ -69,15 +75,10 @@ namespace wtf
     ns_callback = func;
   }
 
-  bool Network::sendMessage(const std::string& data, const SocketType type)
+  bool Network::sendMessage(sf::Packet& packet)
   {
-    size_t sentTotal = 0;
-
     while (true) {
-      size_t sent = 0;
-      const auto status = ns_tcp.send(&data[sentTotal], data.size() - sentTotal, sent);
-
-      switch (status)
+      switch (ns_tcp.send(packet))
       {
         case sf::Socket::Status::Done:
           return true;
@@ -86,14 +87,16 @@ namespace wtf
           continue;
 
         case sf::Socket::Status::Partial:
-          sentTotal += sent;
           continue;
 
         case sf::Socket::Disconnected:
-          ns_tcpConnected = false;
+          disconnectTcp();
+
+          sf::Packet disconnectPacket;
+          disconnectPacket << "disconnect" << "connection interrupted";
 
           if (ns_callback) {
-            ns_callback("disconnect");
+            ns_callback(disconnectPacket);
           }
 
           return false;

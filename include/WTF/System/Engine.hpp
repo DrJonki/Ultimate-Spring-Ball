@@ -16,14 +16,17 @@ namespace wtf
 
   public:
 
-    Engine();
+    Engine(const std::string& name);
 
     template<typename T, typename ... Args>
     static void pushScene(Args&&... args);
 
     static void exit();
+    static bool running();
 
     int operator ()();
+
+    sf::RenderWindow& getWindow();
 
   private:
 
@@ -34,6 +37,7 @@ namespace wtf
     sf::RenderWindow m_window;
     sf::Clock m_clock;
     std::unique_ptr<Scene> m_scene;
+    float m_fixedAccum;
   };
 
   #include <WTF/System/Engine.inl>

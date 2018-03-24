@@ -40,6 +40,22 @@ ExternalProject_Get_Property(JSON SOURCE_DIR)
 include_directories(${SOURCE_DIR}/include)
 
 
+ExternalProject_Add(Chipmunk
+  GIT_REPOSITORY https://github.com/slembcke/Chipmunk2D.git
+  GIT_TAG master
+
+  UPDATE_COMMAND ""
+  PATCH_COMMAND ""
+  INSTALL_COMMAND ""
+
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+             -DBUILD_DEMOS=OFF
+             -DBUILD_SHARED=OFF
+)
+ExternalProject_Get_Property(Chipmunk SOURCE_DIR)
+include_directories(${SOURCE_DIR}/include)
+
+
 ExternalProject_Add(SFML
   GIT_REPOSITORY https://github.com/SFML/SFML.git
   GIT_TAG master

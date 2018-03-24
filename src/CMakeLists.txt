@@ -8,22 +8,25 @@ set(SRCDIR ${CMAKE_CURRENT_SOURCE_DIR}/WTF)
 set(SRC_ROOT
   ${INCDIR}/Macros.hpp
 )
-source_group("Root" FILES ${SRC_ROOT})
+source_group("WTF" FILES ${SRC_ROOT})
 
 # Scene
 set(SRC_SCENE
+  ${INCDIR}/Scene/Component.hpp
   ${INCDIR}/Scene/Drawable.hpp
   ${INCDIR}/Scene/Drawable.inl
   ${INCDIR}/Scene/Entity.hpp
+  ${INCDIR}/Scene/Entity.inl
   ${INCDIR}/Scene/Layer.hpp
   ${INCDIR}/Scene/Layer.inl
   ${INCDIR}/Scene/Scene.hpp
 
+  ${SRCDIR}/Scene/Component.cpp
   ${SRCDIR}/Scene/Entity.cpp
   ${SRCDIR}/Scene/Layer.cpp
   ${SRCDIR}/Scene/Scene.cpp
 )
-source_group("Scene" FILES ${SRC_SCENE})
+source_group("WTF\\Scene" FILES ${SRC_SCENE})
 
 # System
 set(SRC_SYSTEM
@@ -38,7 +41,7 @@ set(SRC_SYSTEM
   ${SRCDIR}/System/Network.cpp
   ${SRCDIR}/System/Resource.cpp
 )
-source_group("System" FILES ${SRC_SYSTEM})
+source_group("WTF\\System" FILES ${SRC_SYSTEM})
 
 # Util
 set(SRC_UTIL
@@ -47,7 +50,19 @@ set(SRC_UTIL
 
   ${SRCDIR}/Util/Randomizer.cpp
 )
-source_group("Util" FILES ${SRC_UTIL})
+source_group("WTF\\Util" FILES ${SRC_UTIL})
+
+# Server
+set(INCDIR ${CMAKE_SOURCE_DIR}/include/Server)
+set(SRCDIR ${CMAKE_CURRENT_SOURCE_DIR}/Server)
+set(SRC_SERVER
+  ${INCDIR}/Room.hpp
+  ${INCDIR}/Server.hpp
+
+  ${SRCDIR}/Room.cpp
+  ${SRCDIR}/Server.cpp
+)
+source_group("Server" FILES ${SRC_SERVER})
 
 # Game
 set(INCDIR ${CMAKE_SOURCE_DIR}/include/Game)
@@ -55,9 +70,15 @@ set(SRCDIR ${CMAKE_CURRENT_SOURCE_DIR}/Game)
 set(SRC_GAME
   ${SRCDIR}/main.cpp
 
-  ${INCDIR}/Scenes/Connecting.hpp
+  ${INCDIR}/Entities/PhysicsBody.hpp
+  ${INCDIR}/Entities/PhysicsBody.inl
+  ${INCDIR}/Scenes/Base.hpp
+  ${INCDIR}/Scenes/Game.hpp
+  ${INCDIR}/Scenes/Title.hpp
 
-  ${SRCDIR}/Scenes/Connecting.cpp
+  ${SRCDIR}/Scenes/Base.cpp
+  ${SRCDIR}/Scenes/Game.cpp
+  ${SRCDIR}/Scenes/Title.cpp
 )
 source_group("Game" FILES ${SRC_GAME})
 
@@ -66,6 +87,7 @@ set(SRC
   ${SRC_SCENE}
   ${SRC_SYSTEM}
   ${SRC_UTIL}
+  ${SRC_SERVER}
   ${SRC_GAME}
 )
 
@@ -74,7 +96,7 @@ set(SRC
 #########################
 
 add_executable(WTF ${SRC})
-add_dependencies(WTF SFML GLM JSON)
+add_dependencies(WTF SFML GLM JSON Chipmunk)
 add_definitions(-DSFML_STATIC)
 
 if (BUILD_SHARED_LIBS)
@@ -131,6 +153,13 @@ target_link_libraries(WTF
   ws2_32.lib
   Wldap32.lib
 )
+
+# Chipmunk
+ExternalProject_Get_Property(Chipmunk BINARY_DIR)
+set(CHIP_BIN_DIR ${BINARY_DIR}/src/${CMAKE_CFG_INTDIR})
+
+target_link_libraries(WTF ${CHIP_BIN_DIR}/${CMK_SLP}chipmunk${CMK_SLS})
+
 
 # Copy assets
 add_custom_target(wtf_assets ALL DEPENDS asset_copy)

@@ -66,4 +66,11 @@ namespace wtf
 
     return itr->second;
   }
+
+  void Resource::clearAll()
+  {
+    ns_fonts.clear();
+    ns_soundbuffers.clear();
+    ns_textures.clear();
+  }
 }

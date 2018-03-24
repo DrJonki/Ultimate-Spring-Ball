@@ -2,6 +2,7 @@
 
 #include <WTF/Export.hpp>
 #include <WTF/Macros.hpp>
+#include <SFML/Network/Packet.hpp>
 #include <functional>
 #include <string>
 
@@ -19,16 +20,20 @@ namespace wtf
       Udp,
     };
 
-    typedef std::function<void(const std::string& data)> MessageFunc;
+    typedef std::function<void(sf::Packet&)> MessageFunc;
 
   public:
 
     static bool connectTcp(const std::string& address, const unsigned short port);
 
+    static void disconnectTcp();
+
+    static bool tcpConnected();
+
     static void pollMessages();
 
     static void setOnMessage(MessageFunc&& func);
 
-    static bool sendMessage(const std::string& data, const SocketType type = SocketType::Tcp);
+    static bool sendMessage(sf::Packet& packet);
   };
 }
