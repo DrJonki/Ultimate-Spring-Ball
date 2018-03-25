@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Server/Level/Level.hpp>
 #include <atomic>
 #include <string>
 #include <thread>
@@ -9,11 +10,13 @@
 
 namespace sf
 {
-  class TcpSocket;
+  class Packet;
 }
 
 namespace usbs
 {
+  class Socket;
+
   class Room final
   {
   public:
@@ -28,7 +31,7 @@ namespace usbs
 
   private:
 
-    typedef std::unordered_map<std::string, std::unique_ptr<sf::TcpSocket>> ClientMap;
+    typedef std::unordered_map<std::string, std::unique_ptr<Socket>> ClientMap;
 
   public:
 
@@ -38,7 +41,7 @@ namespace usbs
 
     void forceExit();
 
-    bool join(const std::string& id, std::unique_ptr<sf::TcpSocket>&& client);
+    bool join(const std::string& id, std::unique_ptr<Socket>&& client);
 
     Status getStatus() const;
 
@@ -46,9 +49,14 @@ namespace usbs
 
     void operator ()();
 
+    void emit(const sf::Packet& packet, const char* except = nullptr);
+
+    void onBegin();
+
   private:
 
     std::atomic<Status> m_status;
+    std::unique_ptr<Level> m_level;
     ClientMap m_pendingClients;
     ClientMap m_clients;
     std::mutex m_clientJoinMutex;

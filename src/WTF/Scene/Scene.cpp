@@ -21,6 +21,11 @@ namespace wtf
     return ref;
   }
 
+  void Scene::clearLayers()
+  {
+    m_layers.clear();
+  }
+
   void Scene::update(const float dt)
   {
     for (auto& i : m_layers) {

@@ -28,6 +28,8 @@ namespace wtf
 
     Layer& addLayer(const uint32_t weight);
 
+    void clearLayers();
+
     virtual void update(const float dt);
 
     virtual void fixedUpdate(const float step);

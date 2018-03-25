@@ -13,6 +13,8 @@ namespace sf
 
 namespace usbs
 {
+  class Socket;
+
   class Server final
   {
   public:
@@ -38,6 +40,6 @@ namespace usbs
     const bool m_local;
     std::atomic<bool> m_running;
     std::unordered_map<unsigned long long, std::unique_ptr<Room>> m_rooms;
-    std::unordered_map<std::string, std::unique_ptr<sf::TcpSocket>> m_clients;
+    std::unordered_map<std::string, std::unique_ptr<Socket>> m_clients;
   };
 }

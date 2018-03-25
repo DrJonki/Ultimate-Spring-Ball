@@ -1,4 +1,5 @@
 #include <Server/Server.hpp>
+#include <Server/Socket.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/TcpListener.hpp>
 #include <SFML/Network/TcpSocket.hpp>
@@ -43,10 +44,10 @@ namespace usbs
             for (auto& i : m_clients) {
               auto& client = *i.second;
 
-              if (selector.isReady(client)) {
+              if (selector.isReady(client.get())) {
                 sf::Packet packet;
 
-                if (client.receive(packet) == sf::Socket::Status::Done) {
+                if (client.get().receive(packet) == sf::Socket::Status::Done) {
                   handleMessage(packet, i.first);
                 }
               }
@@ -90,11 +91,15 @@ namespace usbs
 
   void Server::emit(sf::Packet & packet)
   {
+    for (auto& i : m_clients) {
+      sf::Packet packetCopy(packet);
+      i.second->send(packetCopy);
+    }
   }
 
   void Server::handleConnection(std::unique_ptr<sf::TcpSocket>&& client)
   {
-    m_clients[client->getRemoteAddress().toString() + ":" + std::to_string(client->getRemotePort())] = std::move(client);
+    m_clients[client->getRemoteAddress().toString() + ":" + std::to_string(client->getRemotePort())] = std::make_unique<Socket>(std::move(client));
   }
 
   void Server::handleMessage(sf::Packet& packet, const std::string& clientId)
@@ -102,8 +107,26 @@ namespace usbs
     std::string event;
     packet >> event;
 
-    if (event == "findGame") {
+    if (event == "joinRandomGame") {
+      const auto client = m_clients.find(clientId);
 
+      for (auto& i : m_rooms) {
+        if (i.second->join(clientId, std::move(client->second))) {
+          m_clients.erase(client);
+          return;
+        }
+      }
+
+      static unsigned long long roomId = 0ul;
+
+      auto newRoom = std::make_unique<Room>();
+      newRoom->join(clientId, std::move(client->second));
+
+      m_rooms[roomId++] = std::move(newRoom);
+
+      return;
     }
+
+
   }
 }

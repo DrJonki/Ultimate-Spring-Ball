@@ -1,4 +1,5 @@
 #include <Game/Scenes/Title.hpp>
+#include <Game/Scenes/Game.hpp>
 #include <WTF/Scene/Layer.hpp>
 #include <WTF/System/Engine.hpp>
 #include <WTF/System/Resource.hpp>
@@ -14,13 +15,23 @@ namespace usb
 
         return true;
       }))
+    , m_timer(0.f)
+    , m_music()
     , m_mainLayer(addLayer(0))
     , m_connectionText(m_mainLayer.insert<wtf::Drawable<sf::Text>>(""))
     , m_singlePlayerText(m_mainLayer.insert<wtf::Drawable<sf::Text>>(""))
     , m_multiPlayerText(m_mainLayer.insert<wtf::Drawable<sf::Text>>(""))
     , m_multiPlayerConnectionText(m_mainLayer.insert<wtf::Drawable<sf::Text>>(""))
-    , m_timer(0.f)
+    , m_titleText(m_mainLayer.insert<wtf::Drawable<sf::Text>>(""))
   {
+    // Music
+    {
+      m_music.openFromFile("assets/Music/And_-_01_-_Gigababoki.ogg");
+      m_music.setRelativeToListener(true);
+      m_music.setLoop(true);
+      m_music.play();
+    }
+
     // Text elements
     {
       const auto& font = wtf::Resource::font("helsinki.ttf");
@@ -49,11 +60,25 @@ namespace usb
       m_multiPlayerConnectionText.setString("Waiting for connection...");
       m_multiPlayerConnectionText.setFillColor(sf::Color::Red);
       m_multiPlayerConnectionText.setPosition(10, 950);
+
+      // Title text
+      {
+        m_titleText.setFont(font);
+        m_titleText.setCharacterSize(100);
+        m_titleText.setFillColor(sf::Color::Yellow);
+        m_titleText.setString("  ULTIMATE\nSPRING BALL");
+
+        const auto bounds = m_titleText.getGlobalBounds();
+        m_titleText.setOrigin(bounds.width / 2, bounds.height / 2);
+        m_titleText.setPosition(500, 400);
+      }
     }
   }
 
   void TitleScene::update(const float dt)
   {
+    m_timer += dt;
+
     if (isConnected()) {
       {
         m_connectionText.setString("Connected!");
@@ -65,22 +90,32 @@ namespace usb
     }
     else {
       {
-        const auto alpha = static_cast<unsigned char>((std::cos(m_timer += dt * 4.f) + 1.f) / 2 * (UCHAR_MAX / 2) + UCHAR_MAX / 2);
+        const auto alpha = static_cast<unsigned char>((std::cos(m_timer * 5) + 1.f) / 2 * (UCHAR_MAX / 2) + UCHAR_MAX / 2);
 
         m_connectionText.setFillColor(sf::Color(255, 255, 255, alpha));
         m_multiPlayerConnectionText.setFillColor(sf::Color(255, 0, 0, alpha));
       }
     }
 
-    
+    const auto scale = 0.75f + (std::cos(m_timer * 11) + 1.f) / 2.f / 4.f;
+    const auto rotation = std::sin(m_timer * 5) * 22;
+    m_titleText.setScale(scale, scale);
+    m_titleText.setRotation(rotation);
+
+    BaseScene::update(dt);
   }
 
   void TitleScene::onWindowEvent(const sf::Event & event)
   {
     switch (event.type)
     {
-      default:
+      case sf::Event::EventType::KeyReleased: {
+        if (event.key.code == sf::Keyboard::Key::S) {
+          wtf::Engine::pushScene<GameScene>(true);
+        }
+
         break;
+      }
     }
   }
 

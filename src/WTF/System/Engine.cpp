@@ -11,6 +11,7 @@ namespace wtf
   Engine::Engine(const std::string& name)
     : m_window()
     , m_clock()
+    , m_clearColor(sf::Color::Black)
     , m_scene()
     , m_fixedAccum(0.f)
   {
@@ -42,13 +43,18 @@ namespace wtf
     return ms_instance->m_window.isOpen();
   }
 
+  void Engine::setWindowClearColor(const sf::Color & color)
+  {
+    ms_instance->m_clearColor = color;
+  }
+
   int Engine::operator ()()
   {
     while (running()) {
       static const auto fixedStep = 1.f / Config::get<int>("FIXED_TICKRATE");
       const auto delta = m_clock.restart().asSeconds();
 
-      m_window.clear();
+      m_window.clear(m_clearColor);
 
       if (m_scene) {
         m_scene->update(delta);
@@ -98,6 +104,6 @@ namespace wtf
 
   sf::RenderWindow & Engine::getWindow()
   {
-    return m_window;
+    return ms_instance->m_window;
   }
 }

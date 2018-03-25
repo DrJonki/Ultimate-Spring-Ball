@@ -56,11 +56,19 @@ source_group("WTF\\Util" FILES ${SRC_UTIL})
 set(INCDIR ${CMAKE_SOURCE_DIR}/include/Server)
 set(SRCDIR ${CMAKE_CURRENT_SOURCE_DIR}/Server)
 set(SRC_SERVER
+  ${INCDIR}/Bot.hpp
+  ${INCDIR}/Player.hpp
   ${INCDIR}/Room.hpp
   ${INCDIR}/Server.hpp
+  ${INCDIR}/Socket.hpp
+  ${INCDIR}/Level/Level.hpp
 
+  ${SRCDIR}/Bot.cpp
+  ${SRCDIR}/Player.cpp
   ${SRCDIR}/Room.cpp
   ${SRCDIR}/Server.cpp
+  ${SRCDIR}/Socket.cpp
+  ${SRCDIR}/Level/Level.cpp
 )
 source_group("Server" FILES ${SRC_SERVER})
 
@@ -70,12 +78,16 @@ set(SRCDIR ${CMAKE_CURRENT_SOURCE_DIR}/Game)
 set(SRC_GAME
   ${SRCDIR}/main.cpp
 
+  ${INCDIR}/Entities/Obstacle.hpp
   ${INCDIR}/Entities/PhysicsBody.hpp
   ${INCDIR}/Entities/PhysicsBody.inl
+  ${INCDIR}/Entities/Wall.hpp
   ${INCDIR}/Scenes/Base.hpp
   ${INCDIR}/Scenes/Game.hpp
   ${INCDIR}/Scenes/Title.hpp
 
+  ${SRCDIR}/Entities/Obstacle.cpp
+  ${SRCDIR}/Entities/Wall.cpp
   ${SRCDIR}/Scenes/Base.cpp
   ${SRCDIR}/Scenes/Game.cpp
   ${SRCDIR}/Scenes/Title.cpp

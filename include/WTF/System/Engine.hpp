@@ -24,9 +24,11 @@ namespace wtf
     static void exit();
     static bool running();
 
-    int operator ()();
+    static void setWindowClearColor(const sf::Color& color);
 
-    sf::RenderWindow& getWindow();
+    static sf::RenderWindow& getWindow();
+
+    int operator ()();
 
   private:
 
@@ -36,6 +38,7 @@ namespace wtf
 
     sf::RenderWindow m_window;
     sf::Clock m_clock;
+    sf::Color m_clearColor;
     std::unique_ptr<Scene> m_scene;
     float m_fixedAccum;
   };
