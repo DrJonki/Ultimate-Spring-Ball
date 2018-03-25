@@ -9,7 +9,7 @@ namespace usbs
 {
   Room::Room()
     : m_status(Status::Waiting)
-    , m_level()
+    , m_level(std::make_unique<Level>(*this))
     , m_clients()
     , m_pendingClients()
     , m_clientJoinMutex()
@@ -65,14 +65,24 @@ namespace usbs
 
         for (auto& i : m_pendingClients) {
           sf::Packet packet;
-          packet << "joined";
+          packet << "joinedSelf";
 
           /*for (auto& j : m_clients) {
             packet << j.first << 
           }*/
 
           i.second->send(packet);
+
+          sf::Packet beginPacket;
+          beginPacket << "roundBegin";
+          beginPacket << m_level->getJson();
+
+          i.second->send(beginPacket);
+
+          m_clients[i.first] = std::move(i.second);
         }
+
+        m_pendingClients.clear();
       }
       else if (status == Status::Running) {
 

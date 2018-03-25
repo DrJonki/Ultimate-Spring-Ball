@@ -74,6 +74,7 @@ namespace usbs
       throw ex;
     }
 
+    if (!m_local)
     {
       sf::Packet packet;
       packet << "disconnect" << "server closed";
@@ -99,7 +100,9 @@ namespace usbs
 
   void Server::handleConnection(std::unique_ptr<sf::TcpSocket>&& client)
   {
-    m_clients[client->getRemoteAddress().toString() + ":" + std::to_string(client->getRemotePort())] = std::make_unique<Socket>(std::move(client));
+    const std::string id = client->getRemoteAddress().toString() + ":" + std::to_string(client->getRemotePort());
+
+    m_clients[id] = std::make_unique<Socket>(std::move(client));
   }
 
   void Server::handleMessage(sf::Packet& packet, const std::string& clientId)

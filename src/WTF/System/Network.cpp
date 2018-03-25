@@ -39,7 +39,7 @@ namespace wtf
 
   void Network::pollMessages()
   {
-    if (!ns_callback || !ns_tcpConnected) {
+    if (!ns_callback || !tcpConnected()) {
       return;
     }
 

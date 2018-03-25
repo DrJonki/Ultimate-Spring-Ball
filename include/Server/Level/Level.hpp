@@ -17,6 +17,7 @@ namespace usbs
     enum ObstacleType
     {
       Ground,
+      Player,
 
       ObstacleRect,
       ObstacleCircle,
@@ -29,7 +30,6 @@ namespace usbs
     {
       sf::Color color;
       cpShape* shape = nullptr;
-      cpBody* body = nullptr;
     };
 
   public:

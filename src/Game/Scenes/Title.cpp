@@ -1,5 +1,6 @@
 #include <Game/Scenes/Title.hpp>
 #include <Game/Scenes/Game.hpp>
+#include <WTF/Util/Randomizer.hpp>
 #include <WTF/Scene/Layer.hpp>
 #include <WTF/System/Engine.hpp>
 #include <WTF/System/Resource.hpp>

@@ -2,6 +2,7 @@
 
 #include <Game/Scenes/Base.hpp>
 #include <chipmunk/chipmunk_structs.h>
+#include <SFML/Audio/Music.hpp>
 #include <memory>
 #include <thread>
 
@@ -12,6 +13,8 @@ namespace usbs
 
 namespace usb
 {
+  class Player;
+
   class GameScene : public BaseScene
   {
   public:
@@ -36,5 +39,17 @@ namespace usb
     std::thread m_localServerThread;
     cpSpace* m_space;
     const bool m_local;
+
+    // Layers
+    wtf::Layer& m_worldLayer;
+
+    // Player
+    Player& m_player;
+
+    // Views
+    sf::View m_worldView;
+
+    // Music
+    sf::Music m_music;
   };
 }

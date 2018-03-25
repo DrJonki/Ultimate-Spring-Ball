@@ -16,7 +16,7 @@ namespace usb
 
   BaseScene::~BaseScene()
   {
-    wtf::Network::setOnMessage([](sf::Packet&) {});
+    // wtf::Network::setOnMessage([](sf::Packet&) {});
   }
 
   bool BaseScene::connect()

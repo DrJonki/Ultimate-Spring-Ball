@@ -80,12 +80,14 @@ set(SRC_GAME
 
   ${INCDIR}/Entities/Obstacle.hpp
   ${INCDIR}/Entities/PhysicsBody.hpp
+  ${INCDIR}/Entities/Player.hpp
   ${INCDIR}/Entities/PhysicsBody.inl
   ${INCDIR}/Entities/Wall.hpp
   ${INCDIR}/Scenes/Base.hpp
   ${INCDIR}/Scenes/Game.hpp
   ${INCDIR}/Scenes/Title.hpp
 
+  ${SRCDIR}/Entities/Player.cpp
   ${SRCDIR}/Entities/Obstacle.cpp
   ${SRCDIR}/Entities/Wall.cpp
   ${SRCDIR}/Scenes/Base.cpp

@@ -3,8 +3,10 @@
 #include <Game/Scenes/Base.hpp>
 #include <WTF/Scene/Drawable.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Audio/Music.hpp>
 #include <future>
+#include <tuple>
 
 namespace wtf
 {

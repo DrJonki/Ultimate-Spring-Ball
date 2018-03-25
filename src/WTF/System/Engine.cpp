@@ -1,6 +1,7 @@
 #include <WTF/System/Engine.hpp>
 #include <WTF/System/Config.hpp>
 #include <WTF/System/Resource.hpp>
+#include <WTF/System/Network.hpp>
 #include <WTF/Scene/Scene.hpp>
 #include <SFML/Window/Event.hpp>
 
@@ -54,6 +55,7 @@ namespace wtf
       static const auto fixedStep = 1.f / Config::get<int>("FIXED_TICKRATE");
       const auto delta = m_clock.restart().asSeconds();
 
+      Network::pollMessages();
       m_window.clear(m_clearColor);
 
       if (m_scene) {
